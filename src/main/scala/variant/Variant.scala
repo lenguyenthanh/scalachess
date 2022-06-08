@@ -76,7 +76,7 @@ abstract class Variant private[variant] (
   def kingSafety(a: Actor, m: Move): Boolean =
     kingSafety(
       m,
-      if ((a.piece is King) || a.check) (_ => true) else (_.role.projection),
+      if ((a.piece is King) || a.check) _ => true else (_.role.projection),
       if (a.piece.role == King) None else a.board kingPosOf a.color
     )
 

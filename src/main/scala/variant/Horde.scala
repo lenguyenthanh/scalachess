@@ -22,7 +22,7 @@ case object Horde
     val whitePawnsHorde = frontPawns ++ (for {
       x <- File.all
       y <- Rank.all.take(4)
-    } yield (Pos(x, y) -> White.pawn)) toMap
+    } yield Pos(x, y) -> White.pawn) toMap
 
     val blackPieces = (for (y <- List(Rank.Seventh, Rank.Eighth); x <- File.all) yield {
       Pos(x, y) -> (y match {
@@ -53,7 +53,7 @@ case object Horde
     lazy val notKingBoard = board.kingPos.get(Color.black).flatMap(board.take).getOrElse(board)
     val hordePos          = board.occupation(Color.white) // may include promoted pieces
     val mateInOne =
-      hordePos.sizeIs == 1 && hordePos.forall(pos => pieceThreatened(board, Color.black, pos, (_ => true)))
+      hordePos.sizeIs == 1 && hordePos.forall(pos => pieceThreatened(board, Color.black, pos, _ => true))
     !mateInOne && notKingBoard.actors.values.forall(actor => actor.moves.isEmpty)
   }
 

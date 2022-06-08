@@ -39,11 +39,11 @@ object Forsyth {
                 .sortBy(_.file)
               (for {
                 kingPos <- board.kingPosOf(color)
-                rookPos <- (ch.toLower match {
+                rookPos <- ch.toLower match {
                   case 'k'  => rooks.reverse.find(_ ?> kingPos)
                   case 'q'  => rooks.find(_ ?< kingPos)
                   case file => rooks.find(_.file.char == file)
-                })
+                }
                 side <- Side.kingRookSide(kingPos, rookPos)
               } yield (c.add(color, side), r + rookPos)).getOrElse((c, r))
           }
@@ -231,16 +231,16 @@ object Forsyth {
     {
       // castling rights with inner rooks are represented by their file name
       (if (board.castles.whiteKingSide && wr.nonEmpty && wur.nonEmpty)
-         (if (wur contains wr.max) "K" else wur.max.file.toUpperCaseString)
+         if (wur contains wr.max) "K" else wur.max.file.toUpperCaseString
        else "") +
         (if (board.castles.whiteQueenSide && wr.nonEmpty && wur.nonEmpty)
-           (if (wur contains wr.min) "Q" else wur.min.file.toUpperCaseString)
+           if (wur contains wr.min) "Q" else wur.min.file.toUpperCaseString
          else "") +
         (if (board.castles.blackKingSide && br.nonEmpty && bur.nonEmpty)
-           (if (bur contains br.max) "k" else bur.max.file)
+           if (bur contains br.max) "k" else bur.max.file
          else "") +
         (if (board.castles.blackQueenSide && br.nonEmpty && bur.nonEmpty)
-           (if (bur contains br.min) "q" else bur.min.file)
+           if (bur contains br.min) "q" else bur.min.file
          else "")
     } match {
       case "" => "-"

@@ -21,8 +21,8 @@ object Visual {
     }
     Board(
       pieces = (for {
-        (l, y) <- (filtered zipWithIndex)
-        (c, x) <- (l zipWithIndex)
+        (l, y) <- filtered zipWithIndex
+        (c, x) <- l zipWithIndex
         role   <- Role forsyth c.toLower
       } yield {
         Pos.at(x, 7 - y) map { pos =>

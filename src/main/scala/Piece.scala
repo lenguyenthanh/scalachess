@@ -32,8 +32,8 @@ case class Piece(color: Color, role: Role) {
     if (role == Pawn) Piece.pawnEyes(color, from, to) || {
       (from ?| to) && {
         val dy = to.rank - from.rank
-        if (color.white) (dy == 1 || (from.rank <= Rank.Second && dy == 2))
-        else (dy == -1 || (from.rank >= Rank.Seventh && dy == -2))
+        if (color.white) dy == 1 || (from.rank <= Rank.Second && dy == 2)
+        else dy == -1 || (from.rank >= Rank.Seventh && dy == -2)
       }
     }
     else eyes(from, to)
