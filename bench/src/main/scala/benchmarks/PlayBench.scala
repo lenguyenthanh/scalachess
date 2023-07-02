@@ -1,47 +1,69 @@
 package benchmarks
 
-import org.openjdk.jmh.annotations._
+import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 
 import cats.data.Validated
 import cats.syntax.option.*
 
 import chess.Pos.*
-import chess.format.pgn.Fixtures
-import chess.format.pgn.SanStr
 import chess.variant.Standard
-import chess.{Mode => _ , *}
+import chess.{ Mode => _, * }
+import cats.syntax.all.*
+import chess.format.pgn.{ Fixtures, SanStr }
+import org.openjdk.jmh.infra.Blackhole
 
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.Throughput))
 @OutputTimeUnit(TimeUnit.SECONDS)
 @Measurement(iterations = 15, timeUnit = TimeUnit.SECONDS, time = 3)
 @Warmup(iterations = 15, timeUnit = TimeUnit.SECONDS, time = 3)
-@Fork(2)
+@Fork(value = 3)
+@Threads(value = 1)
 class PlayBench:
 
-  var standard = Game(Board init chess.variant.Standard, White)
+  // the unit of CPU work per iteration
+  private[this] val Work: Long = 10
 
-  @Benchmark
-  def divider() =
-    var moves       = Fixtures.fromProd2
-    val gameReplay  = Replay.boards(SanStr from moves.split(' ').toList, None, Standard).toOption.get
-    Divider(gameReplay)
+  var dividerGames: List[List[Board]] = _
+  var gameMoves: List[List[SanStr]]   = _
+  var standard: Game                  = _
 
-  @Benchmark
-  def replay() =
-    var nb = 500
+  def gameReplay(sans: String) =
+    Replay.boards(SanStr from sans.split(' ').toList, None, Standard).toOption.get
+
+  @Setup
+  def setup() =
+    dividerGames = Fixtures.prod500standard.map(gameReplay)
+
+    var nb    = 50
     var games = Fixtures.prod500standard
-    var gameMoves = (games take nb).map { g =>
-      SanStr from g.split(' ').toList
+    gameMoves = games.take(nb).map(g => SanStr from g.split(' ').toList)
+
+    standard = Game(Board init chess.variant.Standard, White)
+
+  @Benchmark
+  def divider(bh: Blackhole) =
+    var result = dividerGames.map { x =>
+      Blackhole.consumeCPU(Work)
+      Divider(x)
     }
-    gameMoves foreach { moves =>
+    bh.consume(result)
+    result
+
+  @Benchmark
+  def replay(bh: Blackhole) =
+    var result = gameMoves.map { moves =>
+      Blackhole.consumeCPU(Work)
       Replay.gameMoveWhileValid(moves, chess.format.Fen.initial, chess.variant.Standard)
     }
+    bh.consume(result)
+    result
 
   @Benchmark
-  def play() =
-    standard.playMoves(
+  def play(bh: Blackhole) =
+    var result = standard.playMoves(
+      bh,
       E2 -> E4,
       D7 -> D5,
       E4 -> D5,
@@ -70,20 +92,23 @@ class PlayBench:
       B7 -> C6,
       E2 -> A6
     )
+    bh.consume(result)
+    result
 
   extension (game: Game)
     def as(color: Color): Game = game.withPlayer(color)
 
-    def playMoves(moves: (Pos, Pos)*): Validated[String, Game] = playMoveList(moves)
+    def playMoves(bh: Blackhole, moves: (Pos, Pos)*): Validated[String, Game] = playMoveList(bh, moves)
 
-    def playMoveList(moves: Iterable[(Pos, Pos)]): Validated[String, Game] =
+    def playMoveList(bh: Blackhole, moves: Iterable[(Pos, Pos)]): Validated[String, Game] =
       val vg = moves.foldLeft(Validated.valid(game): Validated[String, Game]) { (vg, move) =>
         // vg foreach { x =>
         // println(s"------------------------ ${x.turns} = $move")
         // }
         // because possible moves are asked for player highlight
         // before the move is played (on initial situation)
-        val _ = vg map { _.situation.destinations }
+        Blackhole.consumeCPU(Work)
+        val result = vg map { _.situation.destinations }
         val ng = vg flatMap { g =>
           g(move._1, move._2) map (_._1)
         }
@@ -98,5 +123,3 @@ class PlayBench:
         promotion: Option[PromotableRole] = None
     ): Validated[String, Game] =
       game.apply(orig, dest, promotion) map (_._1)
-
-    def withClock(c: Clock) = game.copy(clock = Option(c))
