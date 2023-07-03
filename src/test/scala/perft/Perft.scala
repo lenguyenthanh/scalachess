@@ -32,7 +32,7 @@ object Perft:
     val str = io.Source.fromResource(file).mkString
     Parser.parse(str).getOrElse(throw RuntimeException(s"Parse perft file failed: $file"))
 
-  private def perft(game: Game, depth: Int): Long =
+  def perft(game: Game, depth: Int): Long =
     if (depth > 0)
       (game.situation.moves.values.toList.flatten: List[Move]).foldLeft(0L)((p, move) =>
         if (move.piece.role == Pawn && (move.dest.rank == Rank.First || move.dest.rank == Rank.Eighth))

@@ -10,8 +10,8 @@ import chess.variant.*
 @State(Scope.Thread)
 @BenchmarkMode(Array(Mode.Throughput))
 @OutputTimeUnit(TimeUnit.SECONDS)
-@Measurement(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 3)
-@Warmup(iterations = 3, timeUnit = TimeUnit.SECONDS, time = 3)
+@Measurement(iterations = 15, timeUnit = TimeUnit.SECONDS, time = 3)
+@Warmup(iterations = 15, timeUnit = TimeUnit.SECONDS, time = 3)
 @Fork(2)
 class PerftBench {
 
