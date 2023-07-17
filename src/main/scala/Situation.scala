@@ -4,11 +4,8 @@ import cats.syntax.all.*
 
 import bitboard.Bitboard
 import bitboard.Bitboard.*
-
 import chess.format.Uci
-import Square.prevRank
-import chess.variant.Crazyhouse
-import chess.variant.Antichess
+import chess.variant.{ Antichess, Crazyhouse }
 
 case class Situation(board: Board, color: Color):
   export board.{ history, isOccupied, kingOf, variant }
@@ -18,11 +15,7 @@ case class Situation(board: Board, color: Color):
   lazy val moves: Map[Square, List[Move]] =
     legalMoves.groupBy(_.orig)
 
-  val movesAt: Square => List[Move] = moves.getOrElse(_, Nil)
-
-  lazy val playerCanCapture: Boolean = legalMoves.exists(_.captures)
-
-  lazy val destinations: Map[Square, List[Square]] = moves.view.mapValues { _.map(_.dest) }.to(Map)
+  lazy val destinations: Map[Square, List[Square]] = moves.view.mapValues(_.map(_.dest)).to(Map)
 
   def drops: Option[List[Square]] =
     variant match

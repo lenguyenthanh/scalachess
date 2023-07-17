@@ -27,6 +27,7 @@ trait ChessTest extends Specification with EitherMatchers:
 
   extension (board: Board)
     def visual = Visual >> board
+
     def destsFrom(from: Square): Option[List[Square]] =
       board(from).map: piece =>
         Situation(board, piece.color).generateMovesAt(from).map(_.dest)
@@ -105,8 +106,9 @@ trait ChessTest extends Specification with EitherMatchers:
   def sortPoss(poss: Seq[Square]): Seq[Square] = poss.sortBy(_.key)
 
   def pieceMoves(piece: Piece, square: Square): Option[List[Square]] =
+
     (makeEmptyBoard place (piece, square)) map { b =>
-      Situation(b, piece.color).movesAt(square).map(_.dest)
+      Situation(b, piece.color).moves.getOrElse(square, Nil).map(_.dest)
     }
 
   def defaultHistory(
