@@ -1,4 +1,5 @@
 package chess
+package variant
 
 import cats.syntax.all.*
 import chess.variant.Crazyhouse.Data

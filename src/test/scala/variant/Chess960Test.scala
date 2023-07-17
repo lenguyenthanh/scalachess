@@ -1,7 +1,7 @@
 package chess
+package variant
 
 import scala.language.implicitConversions
-import variant.Chess960
 import chess.format.pgn.Reader
 import chess.format.EpdFen
 

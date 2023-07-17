@@ -1,6 +1,5 @@
 package chess
-
-import variant.RacingKings
+package variant
 
 import chess.format.EpdFen
 

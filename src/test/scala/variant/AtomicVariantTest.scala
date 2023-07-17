@@ -1,8 +1,8 @@
 package chess
+package variant
 
 import cats.syntax.all.*
 
-import chess.variant.Atomic
 import chess.format.EpdFen
 import chess.format.pgn.SanStr
 

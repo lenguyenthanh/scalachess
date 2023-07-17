@@ -1,11 +1,11 @@
 package chess
+package variant
 
 import cats.syntax.option.*
 
-import chess.format.EpdFen
-import chess.variant.Crazyhouse
-import chess.format.pgn.SanStr
 import chess.Square.*
+import chess.format.EpdFen
+import chess.format.pgn.SanStr
 import chess.bitboard.Bitboard
 
 class CrazyhouseVariantTest extends ChessTest:

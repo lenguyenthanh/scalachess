@@ -1,10 +1,10 @@
 package chess
+package variant
 
 import cats.syntax.option.*
 
 import chess.format.EpdFen
 import chess.Square.*
-import chess.variant.*
 
 class VariantTest extends ChessTest:
 

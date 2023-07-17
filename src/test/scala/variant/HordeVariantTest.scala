@@ -1,6 +1,6 @@
 package chess
+package variant
 
-import variant.Horde
 import chess.format.EpdFen
 import chess.format.pgn.SanStr
 
