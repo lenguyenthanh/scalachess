@@ -46,7 +46,7 @@ case object RacingKings
   def validMoves(situation: Situation): List[Move] =
     import situation.{ genSafeKing, genNonKingAndNonPawn, us }
     val targets = ~us
-    val moves   = genNonKingAndNonPawn(targets) ++ genSafeKing(targets)
+    val moves   = genNonKingAndNonPawn(targets) ::: genSafeKing(targets)
     moves.filter(kingSafety)
 
   override def isInsufficientMaterial(board: Board)                  = false

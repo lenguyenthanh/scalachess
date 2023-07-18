@@ -99,7 +99,7 @@ case class Situation(board: Board, color: Color):
           val targets = ~us
           val bb      = square.bb
           piece.role match
-            case Pawn   => genEnPassant(us & bb) ++ genPawn(bb, targets)
+            case Pawn   => genEnPassant(us & bb) ::: genPawn(bb, targets)
             case Knight => genKnight(us & bb, targets)
             case Bishop => genBishop(us & bb, targets)
             case Rook   => genRook(us & bb, targets)
@@ -145,11 +145,11 @@ case class Situation(board: Board, color: Color):
     case _ => None
 
   def genNonKingAndNonPawn(mask: Bitboard): List[Move] =
-    genKnight(us & board.knights, mask) ++ genBishop(us & board.bishops, mask) ++
-      genRook(us & board.rooks, mask) ++ genQueen(us & board.queens, mask)
+    genKnight(us & board.knights, mask) ::: genBishop(us & board.bishops, mask) :::
+      genRook(us & board.rooks, mask) ::: genQueen(us & board.queens, mask)
 
   def genNonKing(mask: Bitboard): List[Move] =
-    genPawn(us & board.pawns, mask) ++ genNonKingAndNonPawn(mask)
+    genPawn(us & board.pawns, mask) ::: genNonKingAndNonPawn(mask)
 
   /** Generate all pawn moves except en passant
     *  This includes
@@ -196,7 +196,7 @@ case class Situation(board: Board, color: Color):
       move <- normalMove(from, to, Pawn, false)
     yield move
 
-    s1 ++ s2 ++ s3
+    s1 ::: s2 ::: s3
 
   def genKnight(knights: Bitboard, mask: Bitboard): List[Move] =
     for

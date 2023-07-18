@@ -27,7 +27,7 @@ case object Horde
     val frontPawns  = List(Square.B5, Square.C5, Square.F5, Square.G5).map { _ -> White.pawn }
     val blackPawns  = File.all.map { Square(_, Rank.Seventh) -> Black.pawn }
     val blackPieces = File.all.map { x => Square(x, Rank.Eighth) -> (Black - backRank(x.index)) }
-    whitePawnsHorde ++ frontPawns ++ blackPawns ++ blackPieces toMap
+    whitePawnsHorde ::: frontPawns ::: blackPawns ::: blackPieces toMap
 
   override val castles = Castles("kq")
 
@@ -37,7 +37,7 @@ case object Horde
 
   def validMoves(situation: Situation): List[Move] =
     import situation.{ genEnPassant, genNonKing, isWhiteTurn, us, board }
-    if isWhiteTurn then genEnPassant(us & board.pawns) ++ genNonKing(~us & ~board.kings)
+    if isWhiteTurn then genEnPassant(us & board.pawns) ::: genNonKing(~us & ~board.kings)
     else Standard.validMoves(situation)
 
   override def valid(situation: Situation, strict: Boolean) =

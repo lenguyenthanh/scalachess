@@ -51,7 +51,7 @@ case object Standard
     val attacked  = sliders.fold(Bitboard.empty)((a, s) => a | (Bitboard.ray(king, s) ^ s.bl))
     val safeKings = genSafeKing(king, ~us & ~attacked)
     val blockers  = checkers.singleSquare.fold(Nil)(c => genNonKing(Bitboard.between(king, c) | checkers))
-    safeKings ++ blockers
+    safeKings ::: blockers
 
   override def valid(situation: Situation, strict: Boolean): Boolean =
     super.valid(situation, strict) && (!strict || hasValidCheckers(situation))
