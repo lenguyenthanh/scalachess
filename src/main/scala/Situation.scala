@@ -74,7 +74,7 @@ case class Situation(board: Board, color: Color):
     copy(board = board withVariant variant)
 
   lazy val enPassantSquare: Option[Square] =
-    potentialEpSquare.flatMap(_ => legalMoves.find(_.enpassant).map(_.dest))
+    potentialEpSquare >> legalMoves.find(_.enpassant).map(_.dest)
 
   def unary_! = copy(color = !color)
 
