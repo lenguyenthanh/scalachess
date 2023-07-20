@@ -97,7 +97,7 @@ object Replay:
       initialFen: Option[Fen.Epd],
       variant: Variant
   ): Either[ErrorStr, List[Board]] =
-    situations(sans, initialFen, variant) map (_ map (_.board))
+    situations(sans, initialFen, variant).map(_.map(_.board))
 
   def situations(
       sans: Iterable[SanStr],
